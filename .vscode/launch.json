@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/ThayiebahHamdan/Documents/GitHub/OOPDS",
+      "program": "/Users/ThayiebahHamdan/Documents/GitHub/OOPDS/build/Debug/outDebug"
+    }
+  ]
+}
