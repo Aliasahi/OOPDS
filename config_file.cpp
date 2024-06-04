@@ -2,85 +2,98 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstdlib>  // For rand() and srand()
+#include <ctime>    // For time()
 
 using namespace std;
 
-struct Robot
-{
-    string type, name;
-    int x, y;
+// Struct to store robot data
+struct Robot {
+    string name;
+    string model;
+    int x;
+    int y;
 };
 
-int main()
-{
-    ifstream input_file("input.txt");
-    if (!input_file.is_open())
-    {
-        cerr << "Could not open the input file." << endl;
-        return 1;
-    }
-
-    int m, n, steps, num_robots;
-    const int MAX_ROBOTS = 7; // Maximum number of robots
-    Robot robots[MAX_ROBOTS];
-    int robots_count = 0; // Counter for the number of robots read
-
+// Function to read and parse the file
+void readFile(const string &filename, int &M, int &N, int &steps, int &numRobots, Robot robots[]) {
+    ifstream infile(filename);
     string line;
 
-    // Read and parse each line
-    while (getline(input_file, line))
-    {
+    if (infile.is_open()) {
+        // Read M by N
+        getline(infile, line);
         stringstream ss(line);
         string temp;
+        ss >> temp >> temp;  // Skip "M by N :"
+        ss >> M >> N;
 
-        // Check if line contains battlefield dimensions
-        if (line.find("M by N :") != string::npos)
-        {
-            ss >> temp >> temp >> m >> n;
-        }
-        // Check if line contains steps
-        else if (line.find("Steps:") != string::npos)
-        {
-            ss >> temp >> steps;
-        }
-        // Check if line contains number of robots
-        else if (line.find("Robots:") != string::npos)
-        {
-            ss >> temp >> num_robots;
-        }
-        // Otherwise, assume line contains robot information
-        else
-        {
-            ss >> robots[robots_count].type >> robots[robots_count].name;
+        // Read Steps
+        getline(infile, line);
+        ss.clear();
+        ss.str(line);
+        ss >> temp >> steps;  // Skip "Steps:"
 
-            // Read positions
-            string posX, posY;
-            ss >> posX >> posY;
+        // Read number of robots
+        getline(infile, line);
+        ss.clear();
+        ss.str(line);
+        ss >> temp >> numRobots;  // Skip "Robots:"
 
-            // Handle "random" positions
-            if (posX == "random" && posY == "random")
-            {
-                robots[robots_count].x = -1; // Flag for random position
-                robots[robots_count].y = -1;
-            }
-            else
-            {
-                robots[robots_count].x = stoi(posX);
-                robots[robots_count].y = stoi(posY);
+        // Read robots data
+        int robotIndex = 0;
+        while (getline(infile, line) && robotIndex < numRobots) {
+            ss.clear();
+            ss.str(line);
+            string name, model;
+            string xStr, yStr;
+            int x, y;
+
+            ss >> name >> model >> xStr >> yStr;
+
+            if (xStr == "random") {
+                x = rand() % M;
+            } else {
+                x = stoi(xStr);
             }
 
-            // Increment counter
-            robots_count++;
+            if (yStr == "random") {
+                y = rand() % N;
+            } else {
+                y = stoi(yStr);
+            }
+
+            robots[robotIndex].name = name;
+            robots[robotIndex].model = model;
+            robots[robotIndex].x = x;
+            robots[robotIndex].y = y;
+            robotIndex++;
         }
+
+        infile.close();
+    } else {
+        cerr << "Unable to open file";
     }
+}
 
-    // Output the parsed information
-    cout << "Battlefield dimensions: " << m << "x" << n << endl;
+int main() {
+    srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+
+    const string filename = "input.txt";
+    int M, N, steps, numRobots;
+
+    // Assume a maximum of 100 robots for the sake of this example
+    Robot robots[100];
+
+    readFile(filename, M, N, steps, numRobots, robots);
+
+    // Output the read data
+    cout << "Grid size: " << M << " by " << N << endl;
     cout << "Steps: " << steps << endl;
-    cout << "Robots: " << endl;
-    for (int i = 0; i < robots_count; ++i)
-    {
-        cout << robots[i].type << " " << robots[i].name << " (" << robots[i].x << ", " << robots[i].y << ")" << endl;
+    cout << "Number of robots: " << numRobots << endl;
+    for (int i = 0; i < numRobots; ++i) {
+        cout << "Robot " << i + 1 << ": " << robots[i].name << " " << robots[i].model
+             << " (" << robots[i].x << ", " << robots[i].y << ")" << endl;
     }
 
     return 0;
