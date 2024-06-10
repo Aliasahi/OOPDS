@@ -1,5 +1,6 @@
 #include "robot.h"
 #include "battlefield.h"
+#include <iostream>
 using namespace std;
 
 Robot::Robot(int x, int y,string name, char symbol, Battlefield* battlefield) 
@@ -14,17 +15,17 @@ void Robot::takeTurn() {
 
 void Robot::look (int x, int y)
 {
-    court << name << "is looking around at position (" << x << ", " << y << ")." << endl;
+    cout << name << "is looking around at position (" << x << ", " << y << ")." << endl;
 }
 
 void Robot::move()
 {
-    posX += 1 // move to the right
-    court << name << " moved to position (" << posX << ", " << posY << ")." << endl;
+    posX += 1; // move to the right
+    cout << name << " moved to position (" << posX << ", " << posY << ")." << endl;
 }
 
 void Robot::fire (int x, int y) 
 {
-    court << name << " fires at position (" << x << ", " << y << ")." << endl;
+    cout << name << " fires at position (" << x << ", " << y << ")." << endl;
 }
     
